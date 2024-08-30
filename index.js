@@ -3,6 +3,7 @@ const dotenv = require("dotenv")
 const mongoose = require("mongoose")
 const Users = require("./models")
 const connectDB = require("./db")
+const validator = require("email-validator")
 
 
 // Config environment variables
@@ -86,6 +87,12 @@ app.put("/update-email", async(req, res) => {
 
     if (!userExists) {
         return res.status(400).json({message: "This user does not exist."})
+    }
+
+    const emailValid = validator.validate(email)
+
+    if (!emailValid) {
+        return res.status(400).json({message: "Email is invalid."})
     }
 
     updatedUser = Users.findOneAndUpdate(userExists, email, {new: true})
